@@ -4,19 +4,13 @@ import { Query } from 'react-apollo';
 import { propOr } from 'ramda';
 import { User } from './types';
 
-type UserData = {
-	user: User;
-};
-
-class BaseUserQuery extends Query<UserData> {}
-
-type LoginRenderProp = {
-	isLoading: boolean;
-	user: User;
-};
-
 type UserQueryProps = {
-	children: (arg: LoginRenderProp) => ReactNode;
+	children: (
+		arg: {
+			isLoading: boolean;
+			user: User;
+		}
+	) => ReactNode;
 };
 
 export const UserQuery: FC<UserQueryProps> = ({ children }) => (
@@ -39,3 +33,9 @@ export const UserQuery: FC<UserQueryProps> = ({ children }) => (
 		}
 	</BaseUserQuery>
 );
+
+type UserData = {
+	user?: User;
+};
+
+class BaseUserQuery extends Query<UserData> {}

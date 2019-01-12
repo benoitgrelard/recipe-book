@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ApolloProvider } from 'react-apollo';
 import { apolloClient } from './apolloClient';
 import { UserQuery } from './UserQuery';
 import { Login } from './Login';
 import { User } from './types';
 import { logout } from './session';
+import { UserContext } from './UserContext';
+import { AddRecipe } from './AddRecipe';
+import { RecipesList } from './RecipesList';
 
 export function App() {
+	const [isAddingRecipe, setIsAddingRecipe] = useState(false);
+
 	return (
 		<ApolloProvider client={apolloClient}>
 			<h1>Recipe Book</h1>
@@ -15,10 +20,31 @@ export function App() {
 					isLoading ? (
 						<p>loading…</p>
 					) : isLoggedIn(user) ? (
-						<>
-							<h2>Welcome, {user.name}</h2>
-							<button onClick={() => logout()}>Logout</button>
-						</>
+						<UserContext.Provider value={user}>
+							<h2>
+								Welcome back {user.name}{' '}
+								<button onClick={() => logout()}>Logout</button>
+							</h2>
+							<hr />
+							{isAddingRecipe ? (
+								<>
+									<button onClick={() => setIsAddingRecipe(false)}>
+										Cancel
+									</button>
+									<AddRecipe
+										onSuccess={() => setIsAddingRecipe(false)}
+										onError={console.warn}
+									/>
+								</>
+							) : (
+								<>
+									<button onClick={() => setIsAddingRecipe(true)}>
+										Add recipe
+									</button>
+									<RecipesList />
+								</>
+							)}
+						</UserContext.Provider>
 					) : (
 						<Login />
 					)
