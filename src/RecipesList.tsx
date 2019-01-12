@@ -21,7 +21,9 @@ export const RecipesList: FC<RouteComponentProps> = () => (
 						<ul>
 							{recipes.map(recipe => (
 								<li key={recipe.id}>
-									{recipe.name} – {recipe.author.name}
+									<Link to={recipe.id}>
+										{recipe.name} – {recipe.author.name}
+									</Link>
 								</li>
 							))}
 						</ul>

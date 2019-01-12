@@ -7,8 +7,9 @@ import { Login } from './Login';
 import { User } from './types';
 import { logout } from './session';
 import { UserContext } from './UserContext';
-import { AddRecipe } from './AddRecipe';
 import { RecipesList } from './RecipesList';
+import { AddRecipe } from './AddRecipe';
+import { Recipe } from './Recipe';
 
 export function App() {
 	return (
@@ -32,6 +33,7 @@ export function App() {
 								<Redirect from="/" to="/recipes" noThrow />
 								<RecipesList path="/recipes" />
 								<AddRecipe path="/recipes/new" />
+								<Recipe path="/recipes/:recipeId" />
 							</Router>
 						</UserContext.Provider>
 					)
