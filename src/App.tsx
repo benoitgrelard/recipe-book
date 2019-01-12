@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ApolloProvider } from 'react-apollo';
+import { Router, Redirect, Link } from '@reach/router';
 import { apolloClient } from './apolloClient';
 import { UserQuery } from './UserQuery';
 import { Login } from './Login';
@@ -10,8 +11,6 @@ import { AddRecipe } from './AddRecipe';
 import { RecipesList } from './RecipesList';
 
 export function App() {
-	const [isAddingRecipe, setIsAddingRecipe] = useState(false);
-
 	return (
 		<ApolloProvider client={apolloClient}>
 			<h1>Recipe Book</h1>
@@ -19,34 +18,22 @@ export function App() {
 				{({ isLoading, user }) =>
 					isLoading ? (
 						<p>loading…</p>
-					) : isLoggedIn(user) ? (
-						<UserContext.Provider value={user}>
-							<h2>
-								Welcome back {user.name}{' '}
-								<button onClick={() => logout()}>Logout</button>
-							</h2>
-							<hr />
-							{isAddingRecipe ? (
-								<>
-									<button onClick={() => setIsAddingRecipe(false)}>
-										Cancel
-									</button>
-									<AddRecipe
-										onSuccess={() => setIsAddingRecipe(false)}
-										onError={console.warn}
-									/>
-								</>
-							) : (
-								<>
-									<button onClick={() => setIsAddingRecipe(true)}>
-										Add recipe
-									</button>
-									<RecipesList />
-								</>
-							)}
-						</UserContext.Provider>
-					) : (
+					) : !isLoggedIn(user) ? (
 						<Login />
+					) : (
+						<UserContext.Provider value={user}>
+							<p>
+								Welcome back {user.name}{' '}
+								<button type="button" onClick={() => logout()}>
+									Logout
+								</button>
+							</p>
+							<Router>
+								<Redirect from="/" to="/recipes" noThrow />
+								<RecipesList path="/recipes" />
+								<AddRecipe path="/recipes/new" />
+							</Router>
+						</UserContext.Provider>
 					)
 				}
 			</UserQuery>
