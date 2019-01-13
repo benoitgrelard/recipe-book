@@ -1,6 +1,6 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, ReactNode } from 'react';
 import { Link, RouteComponentProps, NavigateFn } from '@reach/router';
-import { Query, Mutation } from 'react-apollo';
+import { Query, Mutation, MutationFn } from 'react-apollo';
 import gql from 'graphql-tag';
 import Markdown from 'react-markdown';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
@@ -45,15 +45,20 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 						<h2>
 							{recipe.name} – {recipe.author.name}
 							{isEditing ? (
-								<button
-									type="button"
-									onClick={() => {
-										setIsEditing(false);
-										console.log(description);
-									}}
-								>
-									done
-								</button>
+								<UpdateRecipeMutation>
+									{updateRecipe => (
+										<button
+											type="button"
+											onClick={() =>
+												updateRecipe({
+													variables: { id: recipe.id, description },
+												}).then(() => setIsEditing(false), console.warn)
+											}
+										>
+											done
+										</button>
+									)}
+								</UpdateRecipeMutation>
 							) : (
 								<button type="button" onClick={() => setIsEditing(true)}>
 									edit
@@ -126,4 +131,38 @@ type DeleteRecipeVariables = {
 class DeleteRecipeMutation extends Mutation<
 	DeleteRecipeData,
 	DeleteRecipeVariables
+> {}
+
+const UpdateRecipeMutation: FC<{
+	children: (
+		arg: MutationFn<UpdateRecipeData, UpdateRecipeVariables>
+	) => ReactNode;
+}> = ({ children }) => (
+	<BaseUpdateRecipeMutation
+		mutation={gql`
+			mutation updateRecipe($id: ID!, $description: String) {
+				updateRecipe(id: $id, description: $description) {
+					id
+					name
+					description
+				}
+			}
+		`}
+	>
+		{mutate => children(mutate)}
+	</BaseUpdateRecipeMutation>
+);
+
+type UpdateRecipeData = {
+	updateRecipe?: RecipeType;
+};
+
+type UpdateRecipeVariables = {
+	id: string;
+	description: string;
+};
+
+class BaseUpdateRecipeMutation extends Mutation<
+	UpdateRecipeData,
+	UpdateRecipeVariables
 > {}
