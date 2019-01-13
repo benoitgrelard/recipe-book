@@ -5,7 +5,21 @@ import { Query } from 'react-apollo';
 import { Recipe } from './types';
 
 export const Recipes: FC<RouteComponentProps> = () => (
-	<RecipesQuery query={RECIPES_QUERY}>
+	<RecipesQuery
+		fetchPolicy="network-only"
+		query={gql`
+			query recipes {
+				allRecipes {
+					id
+					name
+					description
+					author {
+						name
+					}
+				}
+			}
+		`}
+	>
 		{({ loading, data }) => {
 			const recipes: Recipe[] | undefined = data!.allRecipes;
 			return (
@@ -35,21 +49,8 @@ export const Recipes: FC<RouteComponentProps> = () => (
 	</RecipesQuery>
 );
 
-export type RecipesData = {
+type RecipesData = {
 	allRecipes?: Recipe[];
 };
 
 class RecipesQuery extends Query<RecipesData> {}
-
-export const RECIPES_QUERY = gql`
-	query recipes {
-		allRecipes {
-			id
-			name
-			description
-			author {
-				name
-			}
-		}
-	}
-`;

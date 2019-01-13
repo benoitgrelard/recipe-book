@@ -5,7 +5,6 @@ import gql from 'graphql-tag';
 import { mapControlsToValues } from './utils';
 import { UserContext } from './UserContext';
 import { User, Recipe } from './types';
-import { RECIPES_QUERY, RecipesData } from './Recipes';
 
 export const AddRecipe: FC<RouteComponentProps> = ({
 	navigate: navigateFn,
@@ -15,6 +14,7 @@ export const AddRecipe: FC<RouteComponentProps> = ({
 
 	return (
 		<AddRecipeMutation
+			fetchPolicy="network-only"
 			mutation={gql`
 				mutation createRecipe(
 					$name: String
@@ -50,19 +50,6 @@ export const AddRecipe: FC<RouteComponentProps> = ({
 								name,
 								description,
 								authorId: user.id,
-							},
-							update: (cache, mutationResults) => {
-								const { createRecipe } = mutationResults.data!;
-								const { allRecipes } = cache.readQuery<RecipesData>({
-									query: RECIPES_QUERY,
-								})!;
-
-								if (allRecipes) {
-									cache.writeQuery<RecipesData>({
-										query: RECIPES_QUERY,
-										data: { allRecipes: allRecipes.concat([createRecipe]) },
-									});
-								}
 							},
 						}).then(() => navigate('/'), console.warn);
 					}}

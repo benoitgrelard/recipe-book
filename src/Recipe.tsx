@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link, RouteComponentProps } from '@reach/router';
-import { Query } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Recipe as RecipeType } from './types';
 
@@ -10,6 +10,7 @@ type RecipeProps = RouteComponentProps<{
 
 export const Recipe: FC<RecipeProps> = ({ recipeId }) => (
 	<RecipeQuery
+		fetchPolicy="network-only"
 		query={gql`
 			query recipe($id: ID!) {
 				Recipe(id: $id) {
@@ -34,6 +35,7 @@ export const Recipe: FC<RecipeProps> = ({ recipeId }) => (
 				<>
 					<h2>
 						{recipe.name} – {recipe.author.name}
+						<DeleteButton recipeId={recipe.id} />
 					</h2>
 					<Link to="/recipes">👈back</Link>
 					<p>{recipe.description}</p>
@@ -48,3 +50,36 @@ type RecipeData = {
 };
 
 class RecipeQuery extends Query<RecipeData> {}
+
+const DeleteButton: FC<{ recipeId: string }> = ({ recipeId }) => (
+	<DeleteRecipeMutation
+		fetchPolicy="network-only"
+		mutation={gql`
+			mutation deleteRecipe($id: ID!) {
+				deleteRecipe(id: $id) {
+					id
+				}
+			}
+		`}
+		variables={{ id: recipeId }}
+	>
+		{deleteRecipe => (
+			<button type="button" onClick={() => deleteRecipe()}>
+				delete
+			</button>
+		)}
+	</DeleteRecipeMutation>
+);
+
+type DeleteRecipeData = {
+	deleteRecipe?: RecipeType;
+};
+
+type DeleteRecipeVariables = {
+	id: string;
+};
+
+class DeleteRecipeMutation extends Mutation<
+	DeleteRecipeData,
+	DeleteRecipeVariables
+> {}

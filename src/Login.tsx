@@ -16,6 +16,7 @@ export const Login: FC = () => {
 					}
 				}
 			`}
+			fetchPolicy="network-only"
 		>
 			{login => (
 				<form

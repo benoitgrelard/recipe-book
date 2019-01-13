@@ -14,6 +14,7 @@ type UserQueryProps = {
 
 export const UserQuery: FC<UserQueryProps> = ({ children }) => (
 	<BaseUserQuery
+		fetchPolicy="network-only"
 		query={gql`
 			query user {
 				user {
@@ -22,7 +23,6 @@ export const UserQuery: FC<UserQueryProps> = ({ children }) => (
 				}
 			}
 		`}
-		fetchPolicy="network-only"
 	>
 		{({ loading, data }) =>
 			children({
