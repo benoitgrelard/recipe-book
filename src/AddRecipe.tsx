@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { RouteComponentProps, NavigateFn, Link } from '@reach/router';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import { RecipeEditor } from './RecipeEditor';
 import { mapControlsToValues } from './utils';
 import { Recipe } from './types';
 
@@ -14,6 +15,8 @@ export const AddRecipe: FC<AddRecipeProps> = ({
 	authorId,
 }) => {
 	const navigate = navigateFn as NavigateFn;
+	let description: string;
+
 	return (
 		<AddRecipeMutation
 			mutation={gql`
@@ -42,7 +45,7 @@ export const AddRecipe: FC<AddRecipeProps> = ({
 					onSubmit={event => {
 						event.persist();
 						event.preventDefault();
-						const { name, description } = mapControlsToValues(
+						const { name } = mapControlsToValues(
 							// @ts-ignore
 							event.target.elements
 						);
@@ -60,7 +63,7 @@ export const AddRecipe: FC<AddRecipeProps> = ({
 					</label>
 					<label>
 						<div>Description</div>
-						<textarea name="description" autoComplete="off" />
+						<RecipeEditor value="" onChange={value => (description = value)} />
 					</label>
 					<br />
 					<button type="submit">Add Recipe</button>

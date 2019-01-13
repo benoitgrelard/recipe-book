@@ -3,9 +3,7 @@ import { Link, RouteComponentProps, NavigateFn } from '@reach/router';
 import { Query, Mutation, MutationFn } from 'react-apollo';
 import gql from 'graphql-tag';
 import Markdown from 'react-markdown';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
-import 'codemirror/mode/markdown/markdown';
-import 'codemirror/lib/codemirror.css';
+import { RecipeEditor } from './RecipeEditor';
 import { Recipe as RecipeType } from './types';
 
 type RecipeProps = RouteComponentProps<{
@@ -71,13 +69,9 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 						</h2>
 						<Link to="/recipes">👈back</Link>
 						{isEditing ? (
-							<CodeMirror
-								value={recipe.description}
-								options={{
-									mode: 'markdown',
-									lineWrapping: true,
-								}}
-								onChange={(editor, data, value) => (description = value)}
+							<RecipeEditor
+								value={recipe.description || ''}
+								onChange={value => (description = value)}
 							/>
 						) : (
 							<Markdown className="md-parsed" source={recipe.description} />
