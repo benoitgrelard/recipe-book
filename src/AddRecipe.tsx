@@ -1,20 +1,21 @@
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import { RouteComponentProps, NavigateFn, Link } from '@reach/router';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import { mapControlsToValues } from './utils';
-import { UserContext } from './UserContext';
-import { User, Recipe } from './types';
+import { Recipe } from './types';
 
-export const AddRecipe: FC<RouteComponentProps> = ({
+type AddRecipeProps = RouteComponentProps & {
+	authorId: string;
+};
+
+export const AddRecipe: FC<AddRecipeProps> = ({
 	navigate: navigateFn,
+	authorId,
 }) => {
 	const navigate = navigateFn as NavigateFn;
-	const user = useContext(UserContext) as User;
-
 	return (
 		<AddRecipeMutation
-			fetchPolicy="network-only"
 			mutation={gql`
 				mutation createRecipe(
 					$name: String
@@ -45,13 +46,10 @@ export const AddRecipe: FC<RouteComponentProps> = ({
 							// @ts-ignore
 							event.target.elements
 						);
-						addRecipe({
-							variables: {
-								name,
-								description,
-								authorId: user.id,
-							},
-						}).then(() => navigate('/'), console.warn);
+						addRecipe({ variables: { name, description, authorId } }).then(
+							() => navigate('/'),
+							console.warn
+						);
 					}}
 				>
 					<h2>Add Recipe</h2>

@@ -6,7 +6,6 @@ import { UserQuery } from './UserQuery';
 import { Login } from './Login';
 import { User } from './types';
 import { logout } from './session';
-import { UserContext } from './UserContext';
 import { Recipes } from './Recipes';
 import { AddRecipe } from './AddRecipe';
 import { Recipe } from './Recipe';
@@ -24,7 +23,7 @@ export function App() {
 					) : !isLoggedIn(user) ? (
 						<Login />
 					) : (
-						<UserContext.Provider value={user}>
+						<>
 							<p>
 								Welcome back {user.name}{' '}
 								<button type="button" onClick={() => logout()}>
@@ -34,10 +33,10 @@ export function App() {
 							<Router>
 								<Redirect from="/" to="/recipes" noThrow />
 								<Recipes path="/recipes" />
-								<AddRecipe path="/recipes/new" />
+								<AddRecipe path="/recipes/new" authorId={user.id} />
 								<Recipe path="/recipes/:recipeId" />
 							</Router>
-						</UserContext.Provider>
+						</>
 					)
 				}
 			</UserQuery>
