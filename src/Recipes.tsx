@@ -2,19 +2,20 @@ import React, { FC } from 'react';
 import { RouteComponentProps, Link } from '@reach/router';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import { propOr } from 'ramda';
 import { Recipe } from './types';
 
-export const RecipesList: FC<RouteComponentProps> = () => (
+export const Recipes: FC<RouteComponentProps> = () => (
 	<RecipesQuery query={RECIPES_QUERY}>
 		{({ loading, data }) => {
-			const recipes: Recipe[] = propOr([], 'allRecipes', data);
+			const recipes: Recipe[] | undefined = data!.allRecipes;
 			return (
 				<>
 					<h2>Recipes</h2>
 					<Link to="/recipes/new">✌️Add recipe</Link>
 					{loading ? (
 						<p>loading…</p>
+					) : !recipes ? (
+						<p>couldn't load recipes 😢</p>
 					) : recipes.length === 0 ? (
 						<p>No recipes yet :(</p>
 					) : (

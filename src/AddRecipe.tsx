@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import { mapControlsToValues } from './utils';
 import { UserContext } from './UserContext';
 import { User, Recipe } from './types';
-import { RECIPES_QUERY, RecipesData } from './RecipesList';
+import { RECIPES_QUERY, RecipesData } from './Recipes';
 
 export const AddRecipe: FC<RouteComponentProps> = ({
 	navigate: navigateFn,

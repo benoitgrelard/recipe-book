@@ -1,14 +1,13 @@
 import React, { FC, ReactNode } from 'react';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import { propOr } from 'ramda';
+import gql from 'graphql-tag';
 import { User } from './types';
 
 type UserQueryProps = {
 	children: (
 		arg: {
 			isLoading: boolean;
-			user: User;
+			user?: User;
 		}
 	) => ReactNode;
 };
@@ -28,7 +27,7 @@ export const UserQuery: FC<UserQueryProps> = ({ children }) => (
 		{({ loading, data }) =>
 			children({
 				isLoading: loading,
-				user: propOr({}, 'user', data),
+				user: data!.user,
 			})
 		}
 	</BaseUserQuery>

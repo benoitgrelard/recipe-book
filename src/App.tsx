@@ -7,7 +7,7 @@ import { Login } from './Login';
 import { User } from './types';
 import { logout } from './session';
 import { UserContext } from './UserContext';
-import { RecipesList } from './RecipesList';
+import { Recipes } from './Recipes';
 import { AddRecipe } from './AddRecipe';
 import { Recipe } from './Recipe';
 
@@ -19,6 +19,8 @@ export function App() {
 				{({ isLoading, user }) =>
 					isLoading ? (
 						<p>loading…</p>
+					) : !user ? (
+						`couldn't load user 😢`
 					) : !isLoggedIn(user) ? (
 						<Login />
 					) : (
@@ -31,7 +33,7 @@ export function App() {
 							</p>
 							<Router>
 								<Redirect from="/" to="/recipes" noThrow />
-								<RecipesList path="/recipes" />
+								<Recipes path="/recipes" />
 								<AddRecipe path="/recipes/new" />
 								<Recipe path="/recipes/:recipeId" />
 							</Router>
