@@ -6,8 +6,7 @@ export type User = {
 export type Recipe = {
 	id: string;
 	name?: string;
-	description?: string;
-	url?: string;
+	content?: string;
+	reference?: string;
 	author: User;
-	tags?: string[];
 };

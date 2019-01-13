@@ -12,7 +12,6 @@ export const Recipes: FC<RouteComponentProps> = () => (
 				allRecipes {
 					id
 					name
-					description
 					author {
 						name
 					}

@@ -15,24 +15,16 @@ export const AddRecipe: FC<AddRecipeProps> = ({
 	authorId,
 }) => {
 	const navigate = navigateFn as NavigateFn;
-	let description: string;
+	let editedContent: string;
 
 	return (
 		<AddRecipeMutation
 			mutation={gql`
-				mutation createRecipe(
-					$name: String
-					$description: String
-					$authorId: ID!
-				) {
-					createRecipe(
-						name: $name
-						description: $description
-						authorId: $authorId
-					) {
+				mutation addRecipe($name: String, $content: String, $authorId: ID!) {
+					createRecipe(name: $name, content: $content, authorId: $authorId) {
 						id
 						name
-						description
+						content
 						author {
 							name
 						}
@@ -49,10 +41,9 @@ export const AddRecipe: FC<AddRecipeProps> = ({
 							// @ts-ignore
 							event.target.elements
 						);
-						addRecipe({ variables: { name, description, authorId } }).then(
-							() => navigate('/'),
-							console.warn
-						);
+						addRecipe({
+							variables: { name, content: editedContent, authorId },
+						}).then(() => navigate('/'), console.warn);
 					}}
 				>
 					<h2>Add Recipe</h2>
@@ -62,8 +53,11 @@ export const AddRecipe: FC<AddRecipeProps> = ({
 						<input type="text" name="name" autoFocus />
 					</label>
 					<label>
-						<div>Description</div>
-						<RecipeEditor value="" onChange={value => (description = value)} />
+						<div>Content</div>
+						<RecipeEditor
+							value=""
+							onChange={value => (editedContent = value)}
+						/>
 					</label>
 					<br />
 					<button type="submit">Add Recipe</button>
@@ -79,7 +73,7 @@ type AddRecipeData = {
 
 type AddRecipeVariables = {
 	name?: string;
-	description?: string;
+	content?: string;
 	authorId: string;
 };
 

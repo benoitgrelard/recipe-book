@@ -14,7 +14,7 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 	const navigate = navigateFn as NavigateFn;
 	const [isEditing, setIsEditing] = useState(false);
 	let editedName: string;
-	let editedDescription: string;
+	let editedContent: string;
 
 	return (
 		<RecipeQuery
@@ -24,7 +24,7 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 					Recipe(id: $id) {
 						id
 						name
-						description
+						content
 						author {
 							name
 						}
@@ -62,7 +62,7 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 													variables: {
 														id: recipe.id,
 														name: editedName,
-														description: editedDescription,
+														content: editedContent,
 													},
 												}).then(() => setIsEditing(false), console.warn)
 											}
@@ -84,11 +84,11 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 						<Link to="/recipes">👈back</Link>
 						{isEditing ? (
 							<RecipeEditor
-								value={recipe.description || ''}
-								onChange={value => (editedDescription = value)}
+								value={recipe.content || ''}
+								onChange={value => (editedContent = value)}
 							/>
 						) : (
-							<Markdown className="md-parsed" source={recipe.description} />
+							<Markdown className="md-parsed" source={recipe.content} />
 						)}
 					</>
 				);
@@ -148,11 +148,11 @@ const UpdateRecipeMutation: FC<{
 }> = ({ children }) => (
 	<BaseUpdateRecipeMutation
 		mutation={gql`
-			mutation updateRecipe($id: ID!, $name: String, $description: String) {
-				updateRecipe(id: $id, name: $name, description: $description) {
+			mutation updateRecipe($id: ID!, $name: String, $content: String) {
+				updateRecipe(id: $id, name: $name, content: $content) {
 					id
 					name
-					description
+					content
 				}
 			}
 		`}
@@ -168,7 +168,7 @@ type UpdateRecipeData = {
 type UpdateRecipeVariables = {
 	id: string;
 	name: string;
-	description: string;
+	content: string;
 };
 
 class BaseUpdateRecipeMutation extends Mutation<
