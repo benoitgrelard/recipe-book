@@ -13,7 +13,8 @@ type RecipeProps = RouteComponentProps<{
 export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 	const navigate = navigateFn as NavigateFn;
 	const [isEditing, setIsEditing] = useState(false);
-	let description: string;
+	let editedName: string;
+	let editedDescription: string;
 
 	return (
 		<RecipeQuery
@@ -41,7 +42,16 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 				) : (
 					<>
 						<h2>
-							{recipe.name} – {recipe.author.name}
+							{isEditing ? (
+								<input
+									type="text"
+									defaultValue={recipe.name}
+									onChange={event => (editedName = event.target.value)}
+								/>
+							) : (
+								recipe.name
+							)}{' '}
+							– {recipe.author.name}
 							{isEditing ? (
 								<UpdateRecipeMutation>
 									{updateRecipe => (
@@ -49,7 +59,11 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 											type="button"
 											onClick={() =>
 												updateRecipe({
-													variables: { id: recipe.id, description },
+													variables: {
+														id: recipe.id,
+														name: editedName,
+														description: editedDescription,
+													},
 												}).then(() => setIsEditing(false), console.warn)
 											}
 										>
@@ -71,7 +85,7 @@ export const Recipe: FC<RecipeProps> = ({ navigate: navigateFn, recipeId }) => {
 						{isEditing ? (
 							<RecipeEditor
 								value={recipe.description || ''}
-								onChange={value => (description = value)}
+								onChange={value => (editedDescription = value)}
 							/>
 						) : (
 							<Markdown className="md-parsed" source={recipe.description} />
@@ -134,8 +148,8 @@ const UpdateRecipeMutation: FC<{
 }> = ({ children }) => (
 	<BaseUpdateRecipeMutation
 		mutation={gql`
-			mutation updateRecipe($id: ID!, $description: String) {
-				updateRecipe(id: $id, description: $description) {
+			mutation updateRecipe($id: ID!, $name: String, $description: String) {
+				updateRecipe(id: $id, name: $name, description: $description) {
 					id
 					name
 					description
@@ -153,6 +167,7 @@ type UpdateRecipeData = {
 
 type UpdateRecipeVariables = {
 	id: string;
+	name: string;
 	description: string;
 };
 
