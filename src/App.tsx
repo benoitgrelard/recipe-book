@@ -18,10 +18,10 @@ export function App() {
 				{({ isLoading, user }) =>
 					isLoading ? (
 						<p>loading…</p>
-					) : !user ? (
-						`couldn't load user 😢`
 					) : !isLoggedIn(user) ? (
 						<Login />
+					) : !user ? (
+						`couldn't load user 😢`
 					) : (
 						<>
 							<p>
@@ -44,6 +44,6 @@ export function App() {
 	);
 }
 
-function isLoggedIn(user: User) {
+function isLoggedIn(user?: User) {
 	return user && user.id !== undefined;
 }
